@@ -24,6 +24,7 @@
 #include<stdint.h>
 #include"gpio.h"
 #include"timer.h"
+#include"adc.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -38,7 +39,19 @@
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
+#define ADC_CHANNEL_LM35D       0U
+#define ADC_CHANNEL_LDR       	1U
 
+#define ADC_VREF                3.3f
+#define ADC_MAX_VALUE           4095.0f
+
+/*
+ * LM35D sensitivity:
+ *
+ * 10 mV / °C
+ * 0.010 V / °C
+ */
+#define LM35D_SENSITIVITY       0.010f
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -85,6 +98,7 @@ int main(void)
   GPIO_Init();
   TIMER2_Init();
   PWM_Init();
+  ADC_Init();
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
@@ -94,17 +108,52 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  uint16_t adc_value;
+  float voltage;
+  float temperature;
   while (1)
   {
-	  GPIO_LED_Blinking(1);
-	  TIMER2_Delay_ms(2000);
-	  GPIO_LED_Blinking(0);
-	  TIMER2_Delay_ms(2000);
-	  for(int i=0;i<=1000;i+=100)
-	  {
-		  PWM_Motor_Speed_Control(1000);
-		  TIMER2_Delay_ms(1000);
-	  }
+//	  GPIO_LED_Blinking(1);
+//	  TIMER2_Delay_ms(2000);
+//	  GPIO_LED_Blinking(0);
+//	  TIMER2_Delay_ms(2000);
+//	  for(int i=0;i<=1000;i+=100)
+//	  {
+//		  PWM_Motor_Speed_Control(1000);
+//		  TIMER2_Delay_ms(1000);
+//	  }
+
+	  /* ------------------------------------------------------------------
+	     * Read LM35D analog output
+	     *
+	     * LM35D OUT -> PA0
+	     * ------------------------------------------------------------------ */
+	     adc_value = ADC_Read(ADC_CHANNEL_LM35D);
+
+	     /* ------------------------------------------------------------------
+	     * Convert ADC value to voltage
+	     *
+	     *     Voltage = ADC_Value / 4095 × VREF
+	     * ------------------------------------------------------------------ */
+	     voltage = ((float)adc_value * ADC_VREF) / ADC_MAX_VALUE;
+
+	     /* ------------------------------------------------------------------
+	     * Convert voltage to temperature
+	     *
+	     * LM35D:
+	     *
+	     *     10 mV = 1°C
+	     *
+	     *     Temperature = Voltage / 0.010
+	     * ------------------------------------------------------------------ */
+	     temperature = voltage / LM35D_SENSITIVITY;
+
+	     uint8_t brightnessVal = ADC_ReadLDRValue(ADC_CHANNEL_LDR);
+	     if(brightnessVal == 0)
+	    	 GPIO_LED_Blinking(1);
+	     else
+	    	 GPIO_LED_Blinking(0);
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
