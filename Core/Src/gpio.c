@@ -27,7 +27,7 @@ void GPIO_Init(void)
 /**** End of PA5 Configurations ****/
 }
 
-void GPIO_LED_Blinking(uint8_t val)
+void GPIO_LED_ON_OFF(uint8_t val)
 {
 	if(val == 0)
 	{
