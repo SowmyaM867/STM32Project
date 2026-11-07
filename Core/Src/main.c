@@ -25,6 +25,7 @@
 #include"gpio.h"
 #include"timer.h"
 #include"adc.h"
+#include"Interrupt.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -99,6 +100,8 @@ int main(void)
   TIMER2_Init();
   PWM_Init();
   ADC_Init();
+  INTERRUPT_Init();
+  Buzzer_Init();
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
@@ -108,11 +111,20 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  uint16_t adc_value;
-  float voltage;
-  float temperature;
+//  uint16_t adc_value;
+//  float voltage;
+//  float temperature;
   while (1)
   {
+	  if (button_flag)
+	  {
+		  TIMER2_Delay_ms(20);                    // debounce
+		  Buzzer_On();
+		  TIMER2_Delay_ms(2000);               // beep for 0.5 s
+		  Buzzer_Off();
+		  button_flag = 0;                        // clear after the beep
+	  }
+#if 0
 //	  GPIO_LED_Blinking(1);
 //	  TIMER2_Delay_ms(2000);
 //	  GPIO_LED_Blinking(0);
@@ -153,7 +165,7 @@ int main(void)
 	    	 GPIO_LED_Blinking(1);
 	     else
 	    	 GPIO_LED_Blinking(0);
-
+#endif
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

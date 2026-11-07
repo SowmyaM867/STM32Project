@@ -10,5 +10,7 @@
 
 void GPIO_Init(void);
 void GPIO_LED_Blinking(uint8_t val);
-
+void Buzzer_Init(void);
+void Buzzer_On(void);
+void Buzzer_Off(void);
 #endif /* INC_GPIO_H_ */
