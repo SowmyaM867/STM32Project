@@ -144,12 +144,6 @@ int main(void)
 
   while (1)
   {
-//	  TIMER2_Delay_ms(20);                    // debounce
-//	  Buzzer_On();
-//	  TIMER2_Delay_ms(2000);
-//	  Buzzer_Off();
-	  PWM_Motor_Speed_Control(500);
-	  TIMER2_Delay_ms(2000);
       /* ---- 1. Read both sensors (average 8 samples to reduce noise) ---- */
       /* LM35D OUT -> PA0, LDR divider -> PA1 */
       uint32_t lm35_sum = 0;
@@ -194,7 +188,6 @@ int main(void)
 		  TIMER2_Delay_ms(2000);               // beep for 0.5 s
 		  Buzzer_Off();
           emergency_ticks = EMERGENCY_TICKS;
-          Buzzer_On();/* keep buzzer on for 3 s */
           button_flag = 0;
       }
       else if (emergency_ticks > 0)
