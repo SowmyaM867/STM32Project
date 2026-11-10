@@ -181,19 +181,15 @@ int main(void)
       PWM_Motor_Speed_Control(st.motor_speed * 10u);           /* function takes 0 to 1000 */
 
       /* ---- 5. Emergency button (the ISR already switched the buzzer on) ---- */
-      if (button_flag)
-      {
-    	  TIMER2_Delay_ms(20);                    // debounce
-		  Buzzer_On();
-		  TIMER2_Delay_ms(2000);               // beep for 0.5 s
-		  Buzzer_Off();
-          emergency_ticks = EMERGENCY_TICKS;
-          button_flag = 0;
-      }
-      else if (emergency_ticks > 0)
-      {
-          emergency_ticks--;
-      }
+		if (button_flag)
+		{
+			button_flag = 0;
+			emergency_ticks = EMERGENCY_TICKS;                   /* keep buzzer on for 3 s */
+		}
+		else if (emergency_ticks > 0)
+		{
+			emergency_ticks--;
+		}
 
       /* ---- 6. Buzzer: on if over-temperature OR emergency ---- */
       st.buzzer = (over_temp || (emergency_ticks > 0));
