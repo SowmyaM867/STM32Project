@@ -2,6 +2,7 @@
 #include "oled.h"
 #include <stdio.h>
 #include <string.h>
+#include"uart.h"
 
 #define OLED_ADDR        0x3C   /* 7-bit address (0x3D if the module is jumpered) */
 #define OLED_COL_OFFSET  0      /* use 2 for an SH1106 display                    */
@@ -308,6 +309,7 @@ void OLED_Update(const SystemStatus *s, uint8_t screen)
         if (strcmp(text, shown[row]) != 0)          /* redraw only if this line changed */
         {
             OLED_DrawLine(row, text);
+            UART2_Tx_Buffer(text);
             strcpy(shown[row], text);
         }
     }
